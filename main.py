@@ -94,15 +94,28 @@ def register():
 @app.route("/spremi_registraciju", methods=['POST'])
 def store_registration():
 
-    if request.method == 'POST':
-        
-        username = request.form['username'] 
-        password = request.form['password']
-        
+     if request.method == 'POST':
+
+        username = request.form['username']
+        password = request.form['password'];
+        password_check = request.form['password_check'];
+
+        if(password!=password_check):
+            return render_template("error.html",naziv=title, error="Kontrola lozinki nije uspjela!" )
+
+        if(not password_strength(password)):
+            return render_template("error.html",naziv=title, error="Lozinka nije dovoljno jaka!" )
+
         if(check_user(username) is not None):
-            return render_template("error.html",naziv=title, error="Korisnik "+request.form['ime_prezime']+" već postoji!" )  
-        
-    return render_template("home.html",naziv=title, ime=session["ime_korisnika"]) 
+            return render_template("error.html",naziv=title, error="Korisnik "+request.form['ime_prezime']+" već postoji!" )
+
+        password_hash = md5.new(password).hexdigest()  # <--------izračunati hash za password
+
+        print "PASWORD MD5 HASH--> "+password_hash
+
+        add_user(request.form['username'], password_hash, request.form['ime_prezime']);
+
+    return render_template("home.html",naziv=title, ime=session["ime_korisnika"])
 
 def requires_role(*role):
     def wrapper(f):
