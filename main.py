@@ -115,7 +115,7 @@ def store_registration():
 
         add_user(request.form['username'], password_hash, request.form['ime_prezime']);
 
-    return render_template("home.html",naziv=title, ime=session["ime_korisnika"])
+     return render_template("home.html",naziv=title, ime=session["ime_korisnika"])
 
 def requires_role(*role):
     def wrapper(f):
